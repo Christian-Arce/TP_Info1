@@ -22,20 +22,6 @@ class DFA:
     # Si el estado final está en la lista de estados finales, la cadena es reconocida
         return current_state in self.final_states
 
-
-def load_strings_from_json(file_path):
-    with open(file_path, 'r') as f:
-        data = json.load(f)
-    return data
-
-def check_string(strings, dfa):
-    for i, string in enumerate(strings):
-        if dfa.recognizes(string):
-            print(f"El DFA reconoce la cadena número {i+1}: {string}")
-        else:
-            print(f"El DFA no reconoce la cadena número {i+1}: {string}")
-
-
 def generate_strings(alphabet, x):
     # Inicializa la lista de cadenas vacía
     strings = []
@@ -57,6 +43,17 @@ def generate_strings(alphabet, x):
 
     return strings
 
+def load_strings_from_json(file_path):
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    return data
+
+def check_string(strings, dfa):
+    for i, string in enumerate(strings):
+        if dfa.recognizes(string):
+            print(f"El DFA reconoce la cadena número {i+1}: {string}")
+        else:
+            print(f"El DFA no reconoce la cadena número {i+1}: {string}")
 
 def generar_alfabeto(n):
     return [chr(i) for i in range(65, 65+n)]
@@ -65,10 +62,6 @@ def generar_alfabeto(n):
 if __name__ == "__main__":
     file_path_dfa = input("Inserte la ruta del archivo .json con las transiciones del dfa:")
     file_path_cadenas = input("Inserte la ruta del archivo .json para el reconocimiento de cadenas:")
-    """with open(file_path_dfa) as f:
-    # Carga el contenido del archivo y crea un diccionario
-        data = json.load(f)
-    # Crea una instancia de la clase DFA usando el diccionario"""
     dfa = load_strings_from_json(file_path_dfa)
     dfac = DFA(dfa["fStates"], dfa["transitions"], dfa["allStates"])
     stringsj = load_strings_from_json(file_path_cadenas)
