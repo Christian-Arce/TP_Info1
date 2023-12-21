@@ -24,15 +24,16 @@ class DFA:
         return current_state in self.final_states
 
 # Función para generar todas las posibles cadenas de un alfabeto dado hasta una longitud dada
-def generate_strings(alphabet, x):
-    strings = []  # Inicializa la lista de cadenas vacía
-    length = 1  # Inicializa la longitud de la cadena en 1
-    while len(strings) < x:  # Mientras no se hayan generado suficientes cadenas
+def generate_strings(alphabet, from_string, to_string):
+    strings = []
+    length = len(from_string) if from_string else 0
+    max_length = len(to_string)
+    while length <= max_length:
         for string_tuple in itertools.product(alphabet, repeat=length):
-            if len(strings) >= x:  # Si ya se han generado suficientes cadenas, termina el bucle
-                break
-            strings.append(''.join(string_tuple))  # Convierte la tupla a una cadena y añádela a la lista
-        length += 1  # Incrementa la longitud para la próxima iteración
+            string = ''.join(string_tuple)
+            if string >= from_string and string <= to_string:
+                strings.append(string)
+        length += 1
     return strings
 
 # Función para cargar cadenas desde un archivo JSON
@@ -57,9 +58,10 @@ def generar_alfabeto(n):
 def run_strings(ask):
     if ask == "y":
         alphSize = int(input("Inserte el tamaño del alfabeto:"))
-        stringNum = int(input("Inserte la cantidad de cadenas a generar:"))
+        from_string = str(input("Inserte la cadena desde donde desea empezar (mayúsculas):"))
+        to_string = str(input("Inserte la cadena hasta donde desea probar (mayúsculas):"))
         alpString = generar_alfabeto(alphSize)
-        testStrings = generate_strings(alpString, stringNum)
+        testStrings = generate_strings(alpString, from_string, to_string)
         check_string(testStrings, dfac)
 
 # Punto de entrada del programa
@@ -72,7 +74,7 @@ if __name__ == "__main__":
         stringsj = load_strings_from_json(file_path_cadenas)
         strings = stringsj["strings"]
         check_string(strings, dfac)
-        ask = str(input("Quiere probar las primeras N cadenas? y/n:"))
+        ask = str(input("Quiere probar otras cadenas? y/n:"))
         run_strings(ask)
         ask2 = str(input("Quiere salir? y/n:"))
         if ask2 == "y":
