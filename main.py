@@ -23,19 +23,6 @@ class DFA:
         # Si el estado final está en la lista de estados finales, la cadena es reconocida
         return current_state in self.final_states
 
-# Función para generar todas las posibles cadenas de un alfabeto dado hasta una longitud dada
-def generate_strings(alphabet, from_string, to_string):
-    strings = []
-    length = len(from_string) if from_string else 0
-    max_length = len(to_string)
-    while length <= max_length:
-        for string_tuple in itertools.product(alphabet, repeat=length):
-            string = ''.join(string_tuple)
-            if string >= from_string and string <= to_string:
-                strings.append(string)
-        length += 1
-    return strings
-
 # Función para cargar cadenas desde un archivo JSON
 def load_strings_from_json(file_path):
     with open(file_path, 'r') as f:
@@ -55,7 +42,7 @@ def generar_alfabeto(n):
     return [chr(i) for i in range(65, 65+n)]
 
 # Función para permitir al usuario probar las primeras N cadenas generadas
-def run_strings(ask):
+def run_strings(ask, dfac):
     if ask == "y":
         alphSize = int(input("Inserte el tamaño del alfabeto:"))
         from_string = str(input("Inserte la cadena desde donde desea empezar (mayúsculas):"))
@@ -63,6 +50,30 @@ def run_strings(ask):
         alpString = generar_alfabeto(alphSize)
         testStrings = generate_strings(alpString, from_string, to_string)
         check_string(testStrings, dfac)
+
+# Función para generar cadenas dado un rango de cadenas
+def generate_strings(alphabet, from_string, to_string):
+    # Inicializamos una lista vacía para almacenar las cadenas generadas
+    strings = []
+
+    # Determinamos la longitud mínima y máxima de las cadenas a generar
+    min_length = len(from_string) if from_string else 0
+    max_length = len(to_string)
+
+    # Iteramos sobre el rango de longitudes posibles
+    for length in range(min_length, max_length + 1):
+        # Para cada longitud, generamos todas las posibles cadenas
+        for string_tuple in itertools.product(alphabet, repeat=length):
+            # Convertimos la tupla a una cadena
+            string = ''.join(string_tuple)
+            # Verificamos si la cadena está dentro del rango especificado
+            if (length == min_length and string >= from_string) or (length == max_length and string <= to_string) or (min_length < length < max_length):
+                # Si la cadena está dentro del rango, la agregamos a la lista
+                strings.append(string)
+
+    # Devolvemos la lista de cadenas generadas
+    return strings
+
 
 # Punto de entrada del programa
 if __name__ == "__main__":
@@ -75,7 +86,7 @@ if __name__ == "__main__":
         strings = stringsj["strings"]
         check_string(strings, dfac)
         ask = str(input("Quiere probar otras cadenas? y/n:"))
-        run_strings(ask)
+        run_strings(ask, dfac)
         ask2 = str(input("Quiere salir? y/n:"))
         if ask2 == "y":
             break
